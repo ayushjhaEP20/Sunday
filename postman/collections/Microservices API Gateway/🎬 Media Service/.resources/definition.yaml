@@ -1,0 +1,3 @@
+$kind: collection
+description: Upload, storage limits, and quality validation via /api/v1/media
+order: 4000

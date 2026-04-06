@@ -1,0 +1,27 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/media/assets/{{mediaAssetId}}/validate"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "requiredResolution": "4K",
+      "allowedFormats": ["avi"]
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{authToken}}"
+scripts:
+  - type: afterResponse
+    code: >-
+      pm.test("Status is 400 Bad Request", () =>
+      pm.response.to.have.status(400));
+
+      pm.test("Format validation error", () => {
+        pm.expect(pm.response.json().error).to.match(/format|invalid|unsupported/i);
+      });
+    language: text/javascript
+order: 8000

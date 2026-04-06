@@ -1,0 +1,21 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/analytics/events/{{eventId}}/engagement"
+method: GET
+headers:
+  Content-Type: application/json
+auth:
+  type: bearer
+  credentials:
+    token: "{{authToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status is 200 OK", () => pm.response.to.have.status(200));
+      pm.test("Engagement data present", () => {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property("chatMessages");
+        pm.expect(json).to.have.property("pollResponses");
+        pm.expect(json).to.have.property("avgWatchDuration");
+      });
+    language: text/javascript
+order: 3000

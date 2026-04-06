@@ -1,0 +1,30 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/auth/login"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "email": "{{testUserEmail}}",
+      "password": "{{testUserPassword}}"
+    }
+scripts:
+  - type: afterResponse
+    code: >-
+      pm.test("Status is 200 OK", () => pm.response.to.have.status(200));
+
+      pm.test("JWT token present", () => {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property("accessToken");
+        pm.expect(json).to.have.property("refreshToken");
+        pm.collectionVariables.set("authToken", json.accessToken);
+        pm.collectionVariables.set("refreshToken", json.refreshToken);
+      });
+
+      pm.test("Token is non-empty string", () => {
+        pm.expect(pm.collectionVariables.get("authToken")).to.be.a("string").and.not.empty;
+      });
+    language: text/javascript
+order: 2000

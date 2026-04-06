@@ -1,0 +1,11 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/revenue/entitlements?userId={{userId}}"
+method: GET
+queryParams:
+  userId: "{{userId}}"
+scripts:
+  - type: afterResponse
+    code: pm.test("Status is 401 Unauthorized", () =>
+      pm.response.to.have.status(401));
+    language: text/javascript
+order: 10000

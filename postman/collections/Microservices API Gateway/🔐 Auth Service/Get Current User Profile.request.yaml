@@ -1,0 +1,21 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/auth/me"
+method: GET
+headers:
+  Content-Type: application/json
+auth:
+  type: bearer
+  credentials:
+    token: "{{authToken}}"
+scripts:
+  - type: afterResponse
+    code: >-
+      pm.test("Status is 200 OK", () => pm.response.to.have.status(200));
+
+      pm.test("User profile returned", () => {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property("email");
+        pm.expect(json.email).to.eql(pm.collectionVariables.get("testUserEmail"));
+      });
+    language: text/javascript
+order: 4000

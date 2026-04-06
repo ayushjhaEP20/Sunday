@@ -1,0 +1,28 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/events/{{eventId}}/upgrade"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tier": "premium",
+      "enableLiveStream": true,
+      "maxParticipants": 2000
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{authToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status is 200 OK", () => pm.response.to.have.status(200));
+      pm.test("Event upgraded to premium", () => {
+        const json = pm.response.json();
+        pm.expect(json.tier).to.eql("premium");
+        pm.expect(json.isLive).to.be.true;
+      });
+    language: text/javascript
+order: 5000

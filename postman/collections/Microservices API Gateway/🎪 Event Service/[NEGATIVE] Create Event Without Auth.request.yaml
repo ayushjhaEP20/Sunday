@@ -1,0 +1,17 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/events"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Unauthorized Event"
+    }
+scripts:
+  - type: afterResponse
+    code: pm.test("Status is 401 Unauthorized", () =>
+      pm.response.to.have.status(401));
+    language: text/javascript
+order: 11000

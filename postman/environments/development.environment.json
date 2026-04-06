@@ -1,0 +1,27 @@
+{
+  "id": "dev-env-001",
+  "name": "Development",
+  "values": [
+    { "key": "gateway_url", "value": "http://localhost:8080", "type": "default", "enabled": true },
+    { "key": "auth_service_url", "value": "http://localhost:3001", "type": "default", "enabled": true },
+    { "key": "event_service_url", "value": "http://localhost:3002", "type": "default", "enabled": true },
+    { "key": "revenue_service_url", "value": "http://localhost:3003", "type": "default", "enabled": true },
+    { "key": "media_service_url", "value": "http://localhost:3004", "type": "default", "enabled": true },
+    { "key": "analytics_service_url", "value": "http://localhost:3005", "type": "default", "enabled": true },
+    { "key": "stripe_test_key", "value": "sk_test_mock_development_key", "type": "secret", "enabled": true },
+    { "key": "stripe_webhook_secret", "value": "whsec_test_mock_secret", "type": "secret", "enabled": true },
+    { "key": "jwt_secret", "value": "dev_jwt_secret_key_not_for_production", "type": "secret", "enabled": true },
+    { "key": "db_connection", "value": "mongodb://localhost:27017/microservices_dev", "type": "default", "enabled": true },
+    { "key": "redis_url", "value": "redis://localhost:6379", "type": "default", "enabled": true },
+    { "key": "s3_bucket", "value": "dev-media-uploads-bucket", "type": "default", "enabled": true },
+    { "key": "s3_region", "value": "us-east-1", "type": "default", "enabled": true },
+    { "key": "max_upload_size_mb", "value": "500", "type": "default", "enabled": true },
+    { "key": "storage_quota_gb", "value": "10", "type": "default", "enabled": true },
+    { "key": "rate_limit_per_minute", "value": "100", "type": "default", "enabled": true },
+    { "key": "log_level", "value": "debug", "type": "default", "enabled": true },
+    { "key": "environment", "value": "development", "type": "default", "enabled": true }
+  ],
+  "_postman_variable_scope": "environment",
+  "_postman_exported_at": "2026-04-06T00:00:00.000Z",
+  "_postman_exported_using": "Postman/11.0"
+}

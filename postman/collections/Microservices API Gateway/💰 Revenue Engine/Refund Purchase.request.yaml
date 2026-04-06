@@ -1,0 +1,26 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/revenue/purchases/{{purchaseId}}/refund"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "reason": "customer_request",
+      "amount": "full"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{authToken}}"
+scripts:
+  - type: afterResponse
+    code: >-
+      pm.test("Status is 200 OK", () => pm.response.to.have.status(200));
+
+      pm.test("Refund status returned", () => {
+        pm.expect(pm.response.json().refundStatus).to.be.oneOf(["initiated", "completed"]);
+      });
+    language: text/javascript
+order: 8000

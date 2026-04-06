@@ -1,0 +1,30 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/media/upload"
+method: POST
+body:
+  type: formdata
+  content:
+    - type: text
+      key: assetType
+      value: video
+    - type: text
+      key: simulateOverQuota
+      value: "true"
+    - type: text
+      key: eventId
+      value: "{{eventId}}"
+auth:
+  type: bearer
+  credentials:
+    token: "{{authToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status is 413 or 422", () => {
+        pm.expect(pm.response.code).to.be.oneOf([413, 422]);
+      });
+      pm.test("Storage limit error", () => {
+        pm.expect(pm.response.json().error).to.match(/storage|quota|limit/i);
+      });
+    language: text/javascript
+order: 7000

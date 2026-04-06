@@ -1,0 +1,28 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/events/{{eventId}}/participants"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "userId": "{{userId}}",
+      "role": "attendee",
+      "ticketType": "general"
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{authToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status is 201 Created", () => pm.response.to.have.status(201));
+      pm.test("Participant ID saved", () => {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property("participantId");
+        pm.collectionVariables.set("participantId", json.participantId);
+      });
+    language: text/javascript
+order: 6000

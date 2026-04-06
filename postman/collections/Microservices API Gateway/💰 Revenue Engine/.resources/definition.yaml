@@ -1,0 +1,4 @@
+$kind: collection
+description: Entitlement system, purchase flows, SKU pricing, and Stripe
+  webhooks via /api/v1/revenue
+order: 3000

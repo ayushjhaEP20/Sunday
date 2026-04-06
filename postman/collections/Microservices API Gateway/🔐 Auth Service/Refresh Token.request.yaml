@@ -1,0 +1,22 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/auth/refresh"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "refreshToken": "{{refreshToken}}"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status is 200 OK", () => pm.response.to.have.status(200));
+      pm.test("New access token returned", () => {
+        const json = pm.response.json();
+        pm.expect(json.accessToken).to.be.a("string");
+        pm.collectionVariables.set("authToken", json.accessToken);
+      });
+    language: text/javascript
+order: 3000

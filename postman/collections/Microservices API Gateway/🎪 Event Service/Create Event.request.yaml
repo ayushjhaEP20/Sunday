@@ -1,0 +1,36 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/events"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "title": "Tech Summit 2026",
+      "description": "Annual technology conference",
+      "startDate": "2026-06-01T09:00:00Z",
+      "endDate": "2026-06-01T18:00:00Z",
+      "capacity": 500,
+      "type": "conference",
+      "isLive": false,
+      "tags": ["tech", "innovation", "AI"]
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{authToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status is 201 Created", () => pm.response.to.have.status(201));
+      pm.test("Event ID saved", () => {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property("eventId");
+        pm.collectionVariables.set("eventId", json.eventId);
+      });
+      pm.test("Event title matches", () => {
+        pm.expect(pm.response.json().title).to.eql("Tech Summit 2026");
+      });
+    language: text/javascript
+order: 1000

@@ -1,0 +1,37 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/media/upload"
+method: POST
+body:
+  type: formdata
+  content:
+    - type: file
+      key: file
+      src: ""
+      description: Video or image file
+    - type: text
+      key: eventId
+      value: "{{eventId}}"
+    - type: text
+      key: assetType
+      value: video
+    - type: text
+      key: title
+      value: Keynote Recording
+auth:
+  type: bearer
+  credentials:
+    token: "{{authToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status is 201 Created", () => pm.response.to.have.status(201));
+      pm.test("Asset ID saved", () => {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property("assetId");
+        pm.collectionVariables.set("mediaAssetId", json.assetId);
+      });
+      pm.test("Upload URL present", () => {
+        pm.expect(pm.response.json().uploadUrl).to.be.a("string");
+      });
+    language: text/javascript
+order: 1000

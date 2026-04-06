@@ -1,0 +1,40 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/revenue/purchases"
+method: POST
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+      "userId": "{{userId}}",
+      "skuId": "{{skuId}}",
+      "eventId": "{{eventId}}",
+      "paymentMethod": "card",
+      "mockPayload": {
+        "cardNumber": "4242424242424242",
+        "expiry": "12/28",
+        "cvv": "123",
+        "currency": "USD"
+      }
+    }
+auth:
+  type: bearer
+  credentials:
+    token: "{{authToken}}"
+scripts:
+  - type: afterResponse
+    code: >-
+      pm.test("Status is 201 Created", () => pm.response.to.have.status(201));
+
+      pm.test("Purchase ID saved", () => {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property("purchaseId");
+        pm.collectionVariables.set("purchaseId", json.purchaseId);
+      });
+
+      pm.test("Purchase status is pending or completed", () => {
+        pm.expect(pm.response.json().status).to.be.oneOf(["pending", "completed"]);
+      });
+    language: text/javascript
+order: 3000

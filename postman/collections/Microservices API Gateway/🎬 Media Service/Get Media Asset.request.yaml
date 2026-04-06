@@ -1,0 +1,20 @@
+$kind: http-request
+url: "{{baseUrl}}/api/v1/media/assets/{{mediaAssetId}}"
+method: GET
+headers:
+  Content-Type: application/json
+auth:
+  type: bearer
+  credentials:
+    token: "{{authToken}}"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test("Status is 200 OK", () => pm.response.to.have.status(200));
+      pm.test("Asset metadata returned", () => {
+        const json = pm.response.json();
+        pm.expect(json).to.have.property("assetId");
+        pm.expect(json).to.have.property("status");
+      });
+    language: text/javascript
+order: 2000
