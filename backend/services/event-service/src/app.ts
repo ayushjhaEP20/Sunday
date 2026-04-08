@@ -46,6 +46,8 @@ app.get('/health', (req: Request, res: Response) => {
   });
 });
 
+import eventRoutes from './routes/event.routes';
+
 // ========================================
 // API Routes
 // ========================================
@@ -55,14 +57,7 @@ app.get('/health', (req: Request, res: Response) => {
  * Mounted at /api/events
  * Handles all event-related operations
  */
-app.use('/api/events', (req: Request, res: Response) => {
-  // TODO: Mount actual event routes here
-  // This is a placeholder - business logic will be implemented in routes
-  res.status(200).json({
-    message: 'Event Service API',
-    service: 'event-service',
-  });
-});
+app.use('/api/events', eventRoutes);
 
 // ========================================
 // 404 Handler
