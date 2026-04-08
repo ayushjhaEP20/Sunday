@@ -2,9 +2,5 @@
   "watch": ["src"],
   "ext": "ts",
   "ignore": ["src/**/*.spec.ts"],
-  "exec": "ts-node",
-  "execMap": {
-    "ts": "ts-node"
-  },
-  "args": "src/server.ts"
+  "exec": "ts-node src/server.ts"
 }
