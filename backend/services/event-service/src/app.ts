@@ -67,7 +67,7 @@ app.use('/api/events', eventRoutes);
  * 404 Not Found Handler
  * Catches requests to non-existent routes
  */
-app.use((req, res) => {
+app.use((req: Request, res: Response) => {
   res.status(404).json({
     message: 'Route not found'
   });
