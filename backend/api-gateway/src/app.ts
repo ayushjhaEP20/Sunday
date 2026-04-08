@@ -2,61 +2,92 @@ import express, { Application, Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
 
-// Load environment variables
-dotenv.config();
+import { config, validateConfig } from './config';
+import { logger } from './utils/logger';
+import { errorHandler, notFoundHandler } from './middleware/errorHandler';
+import { requestLoggerMiddleware, requestIdMiddleware } from './middleware/requestLogger';
+import { apiRouter } from './routes';
 
-const app: Application = express();
+/**
+ * Application Factory
+ * Creates and configures the Express application following production-grade standards
+ * Implements strict layering and error handling as per AI rules
+ */
+export function createApp(): Application {
+  const app: Application = express();
 
-// Security middleware
-app.use(helmet());
+  // ========================================
+  // Security & CORS Middleware
+  // ========================================
 
-// CORS configuration
-app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
-  credentials: true,
-}));
+  // Helmet for security headers
+  app.use(helmet());
+  logger.debug('Helmet security middleware configured');
 
-// Logging middleware
-app.use(morgan('combined'));
+  // CORS configuration
+  app.use(cors({
+    origin: config.cors.origins,
+    credentials: config.cors.credentials,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
+  }));
+  logger.debug('CORS middleware configured');
 
-// Body parsing middleware
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+  // ========================================
+  // Request Processing Middleware
+  // ========================================
 
-// Health check endpoint
-app.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    service: 'api-gateway',
-  });
-});
+  // Morgan logging (HTTP request logging)
+  app.use(
+    morgan(config.app.isDevelopment ? 'dev' : 'combined', {
+      skip: (req: Request) => req.method === 'OPTIONS',
+    }),
+  );
 
-// API routes (to be expanded with service routing)
-app.get('/', (req: Request, res: Response) => {
-  res.json({
-    message: 'API Gateway is running',
-    version: '1.0.0',
-  });
-});
+  // Request ID middleware
+  app.use(requestIdMiddleware);
 
-// Error handling middleware
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  console.error('Error:', err);
-  res.status(500).json({
-    error: 'Internal Server Error',
-    message: process.env.NODE_ENV === 'development' ? err.message : 'Something went wrong',
-  });
-});
+  // Custom request logger middleware
+  app.use(requestLoggerMiddleware);
 
-// 404 handler
-app.use((req: Request, res: Response) => {
-  res.status(404).json({
-    error: 'Not Found',
-    message: 'The requested resource was not found',
-  });
-});
+  // Body parsing middleware
+  app.use(express.json({ limit: config.gateway.maxRequestSize }));
+  app.use(
+    express.urlencoded({
+      extended: true,
+      limit: config.gateway.maxRequestSize,
+    }),
+  );
+
+  logger.debug('Request processing middleware configured');
+
+  // ========================================
+  // API Routes
+  // ========================================
+
+  app.use('/api', apiRouter);
+
+  logger.debug('API routes configured');
+
+  // ========================================
+  // 404 Handler
+  // ========================================
+
+  app.use(notFoundHandler);
+
+  // ========================================
+  // Error Handling Middleware
+  // ========================================
+
+  app.use(errorHandler);
+
+  logger.info('Express application configured successfully');
+
+  return app;
+}
+
+// Create app instance
+const app = createApp();
 
 export default app;
