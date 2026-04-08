@@ -1,34 +1,99 @@
 {
+  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
+    // ========================================
+    // Target & Module System (Production Requirements)
+    // ========================================
     "target": "ES2020",
     "module": "commonjs",
     "lib": ["ES2020"],
+    "moduleResolution": "node",
+
+    // ========================================
+    // Output Configuration
+    // ========================================
     "outDir": "./dist",
     "rootDir": "./src",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
     "removeComments": true,
+    "importHelpers": true,
+
+    // ========================================
+    // Strict Mode (AI Rules: Clean Code, Resilience)
+    // ========================================
+    "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "strictPropertyInitialization": true,
+    "noImplicitThis": true,
+    "useUnknownInCatchVariables": true,
+    "alwaysStrict": true,
+
+    // ========================================
+    // Additional Type Safety (Production-Grade)
+    // ========================================
+    "exactOptionalPropertyTypes": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+
+    // ========================================
+    // Code Quality & Consistency
+    // ========================================
+    "forceConsistentCasingInFileNames": true,
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
-    "exactOptionalPropertyTypes": true,
-    "noImplicitThis": true,
-    "useUnknownInCatchVariables": true,
-    "noPropertyAccessFromIndexSignature": false,
-    "noImplicitReturns": true
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "allowJs": false,
+    "checkJs": false,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+
+    // ========================================
+    // Experimental Features (Safe for Production)
+    // ========================================
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
+    // ========================================
+    // Performance & Bundle Optimization
+    // ========================================
+    "incremental": true,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "tests"]
+
+  // ========================================
+  // File Inclusion/Exclusion (Microservice Structure)
+  // ========================================
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/__tests__/**",
+    "**/__mocks__/**"
+  ],
+
+  // ========================================
+  // Type Acquisition (Node.js Microservice)
+  // ========================================
+  "typeRoots": [
+    "./node_modules/@types",
+    "./src/types"
+  ]
 }
