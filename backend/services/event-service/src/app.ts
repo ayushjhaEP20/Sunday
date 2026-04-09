@@ -2,6 +2,8 @@ import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import eventRoutes from './routes/event.routes';
+import { errorHandler } from './middleware/error.middleware';
 
 /**
  * Event Service Express Application
@@ -46,8 +48,6 @@ app.get('/health', (req: Request, res: Response) => {
   });
 });
 
-import eventRoutes from './routes/event.routes';
-
 // ========================================
 // API Routes
 // ========================================
@@ -69,7 +69,17 @@ app.use('/api/events', eventRoutes);
  */
 app.use((req: Request, res: Response) => {
   res.status(404).json({
-    message: 'Route not found'
+    message: 'Route not found',
   });
 });
+
+// ========================================
+// Global Error Handler
+// ========================================
+
+/**
+ * Error handling middleware must be mounted after all routes.
+ */
+app.use(errorHandler);
+
 export default app;
